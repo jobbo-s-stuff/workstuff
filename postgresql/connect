@@ -1,0 +1,25 @@
+import simplejson
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+try:
+    connection = psycopg2.connect(user = "user",
+                                  password = "password",
+                                  host = "hostip",
+                                  port = "port",
+                                  database = "dbname")
+    cursor = connection.cursor(cursor_factory=RealDictCursor)
+    car_res = "SELECT cars.carid, cars.licenceplate, cars.vehicletypeid, reservations.reservationid, reservations.carid, reservations.customerid, reservations.starttime, reservations.endtime, reservations.startbatterylevel, reservations.endbatterylevel FROM reservations INNER JOIN cars ON reservations.carid = cars.carid WHERE reservations.starttime BETWEEN '2019-08-01 13:45:00' and '2019-08-02 00:00:00'  and startbatterylevel <= 25  and endbatterylevel >= 84 and isdev = 0 and drivendistance != 0;"
+
+    cursor.execute(car_res)
+
+    print (simplejson.dumps(cursor.fetchall(), indent=2))
+
+except (Exception, psycopg2.Error) as error:
+    print ("Error while fetching PostgreSQL", error)
+finally:
+    # closing database connection
+    if (connection):
+        cursor.close()
+        connection.close()
+        print("PostgreSQL connection is closed")
