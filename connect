@@ -1,25 +1,70 @@
 import simplejson
 import psycopg2
+import csv
 from psycopg2.extras import RealDictCursor
 
-try:
-    connection = psycopg2.connect(user = "user",
-                                  password = "password",
-                                  host = "hostip",
-                                  port = "port",
-                                  database = "dbname")
-    cursor = connection.cursor(cursor_factory=RealDictCursor)
-    car_res = "SELECT cars.carid, cars.licenceplate, cars.vehicletypeid, reservations.reservationid, reservations.carid, reservations.customerid, reservations.starttime, reservations.endtime, reservations.startbatterylevel, reservations.endbatterylevel FROM reservations INNER JOIN cars ON reservations.carid = cars.carid WHERE reservations.starttime BETWEEN '2019-08-01 13:45:00' and '2019-08-02 00:00:00'  and startbatterylevel <= 25  and endbatterylevel >= 84 and isdev = 0 and drivendistance != 0;"
 
-    cursor.execute(car_res)
+def main():
+    # read csv for timeframe
+    # pass as variable to db_query(fuelTimeframe)
+    db_query()
+    # join query result with csv
+        # match timestamps and licence plates
+    # match results
+    # post to voucher service (for loop)
 
-    print (simplejson.dumps(cursor.fetchall(), indent=2))
 
-except (Exception, psycopg2.Error) as error:
-    print ("Error while fetching PostgreSQL", error)
-finally:
-    # closing database connection
-    if (connection):
+def fuel_csv():
+    pass
+    # parse csv
+    # extract startTime, endTime
+    # convert date and time to datetime
+
+
+def db_query():
+    # TODO simplify method by removing try
+        # opening db connection
+        connection = psycopg2.connect(user = "user",
+                                      password = "password",
+                                      host = "host",
+                                      port = "port",
+                                      database = "database")
+        # creating cursor
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        # TODO pass dates into query, move restrictions outside? reduction in query would be nice (variables for cars, reservations, join, where) to be appended for execute()
+        # query for reservations within timeframe
+        car_res = "SELECT cars.carid, cars.licenceplate, cars.vehicletypeid, reservations.reservationid, reservations.carid, reservations.customerid, reservations.starttime, reservations.endtime, reservations.startbatterylevel, reservations.endbatterylevel FROM reservations INNER JOIN cars ON reservations.carid = cars.carid WHERE reservations.starttime BETWEEN " + "'" + timeStart + "'" + " and " + "'" + timeEnd + "'" + " and startbatterylevel <= 25  and endbatterylevel >= 84 and isdev = 0 and drivendistance != 0;"
+        cursor.execute(car_res)
+
+        # fetching and dumping into json
+        print (simplejson.dumps(cursor.fetchall(), indent=2))
+
+        # closing database connection
         cursor.close()
         connection.close()
         print("PostgreSQL connection is closed")
+
+
+def licence_check():
+    pass
+
+
+def prepare_vouchers():
+    pass
+
+
+def post_vouchers():
+    pass
+
+
+def main():
+    # read csv for timeframe
+    # pass as variable to db_query(fuelTimeframe)
+    db_query()
+    # join query result with csv
+        # match timestamps and licence plates
+    # match results
+    # post to voucher service (for loop)
+
+
+main()
