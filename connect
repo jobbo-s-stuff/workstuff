@@ -4,23 +4,6 @@ import csv
 from psycopg2.extras import RealDictCursor
 
 
-def main():
-    # read csv for timeframe
-    # pass as variable to db_query(fuelTimeframe)
-    db_query()
-    # join query result with csv
-        # match timestamps and licence plates
-    # match results
-    # post to voucher service (for loop)
-
-
-def fuel_csv():
-    pass
-    # parse csv
-    # extract startTime, endTime
-    # convert date and time to datetime
-
-
 def db_query():
     # TODO simplify method by removing try
         # opening db connection
@@ -43,28 +26,3 @@ def db_query():
         cursor.close()
         connection.close()
         print("PostgreSQL connection is closed")
-
-
-def licence_check():
-    pass
-
-
-def prepare_vouchers():
-    pass
-
-
-def post_vouchers():
-    pass
-
-
-def main():
-    # read csv for timeframe
-    # pass as variable to db_query(fuelTimeframe)
-    db_query()
-    # join query result with csv
-        # match timestamps and licence plates
-    # match results
-    # post to voucher service (for loop)
-
-
-main()
