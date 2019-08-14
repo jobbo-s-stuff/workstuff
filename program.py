@@ -1,36 +1,42 @@
 import csv_reader
 import connect
+import wunder
 
 
 def main():
     csv_reader.convert()
-    # merge date/time
-    # take min/max timestamps for endTime (/reservations)
-    connect.db_query()
-    # match plates from db_query() with plates from convert()
-    # check against timestamps
+    csv_to_db()
+    connect.db_query()  # pass timestamps, endtime between earliest and latest fuel timestamp, use lambda,
+                        # pass licence plates collection
+
+    # select reservatons that match licence plate and fueltimestamp falls between start and end time
     # convert to API consumable
-    # loop: wunder.post_vouchers
+    wunder.post_vouchers()
 
 
-def time_frame():
+def csv_to_db():
+    # TODO: probably easier to pass directly from csv_reader to connect
+    # check csv_reader's output for min and max fuel timestamp
+    # grab licence plates from csv_reader's output
+    # pass to connect
     pass
-    # this checks output_json for highest and lowest timestamp
-
-
-def plate_match():
-    pass
-    # this matches plates from query to plates from output_json
 
 
 def res_match():
+    # loop through connect output, compare with csv_reader output
+        # match reservation where:
+            # licencePlate identical
+            # fuelTimeStamp >= startTime and <= endTime
+    # pass reservationid, customerid, datetime to list for voucher_convert
+    # TODO: maybe again use class (s. csv_reader todo)
     pass
-    # this matches reservations start/end to specific fueling events
 
 
 def voucher_convert():
+    # loop through list from res_match
+    # convert to json
+    # TODO: check whether easier and more sensible to convert in post method
     pass
-    # this converts json to loopable payloads for post_vouchers
 
 
 if __name__ == '__main__':
