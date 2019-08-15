@@ -1,17 +1,31 @@
+import os
 import csv_reader
 import connect
 import wunder
 
 
 def main():
-    csv_reader.convert()
+    in_filename = get_csv_in()
+    out_filename = get_csv_out()
+    events = csv_reader.read_fuel_csv(in_filename, out_filename)
+    csv_reader.clean_fuel_events(events)
     csv_to_db()
-    connect.db_query()  # pass timestamps, endtime between earliest and latest fuel timestamp, use lambda,
+    #connect.db_query()  # pass timestamps, endtime between earliest and latest fuel timestamp, use lambda,
                         # pass licence plates collection
 
     # select reservatons that match licence plate and fueltimestamp falls between start and end time
     # convert to API consumable
-    wunder.post_vouchers()
+    #wunder.post_vouchers()
+
+
+def get_csv_in():
+    base_folder = os.path.dirname(__file__)
+    return os.path.join(base_folder, 'testdata', 'example_input.csv')
+
+
+def get_csv_out():
+    base_folder = os.path.dirname(__file__)
+    return os.path.join(base_folder, 'testdata', 'example_output.csv')
 
 
 def csv_to_db():

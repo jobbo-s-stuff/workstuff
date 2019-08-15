@@ -1,16 +1,46 @@
 import csv
-
-'''
-Opens csv from path, reads it, saves data in list and converts
-'''
+from fuel_class import FuelEvent
+import datetime
 
 
-def read_fuel_csv():
-    # open file
-    # read file
-    # pass values into list
-    # strip spaces from licenceplates (and V2?)
-    # pass 'Zusatzvermerk' into licence plates if not empty
-    # merge date time and convert to YYYY-MM-DD hh:mm:ss
-    # TODO: determine whether good idea to create class for fueling events to pass data into
-    pass
+def read_fuel_csv(in_filename, out_filename):
+    with open(in_filename, 'r', encoding='utf-8') as fin, open(out_filename, 'w', encoding='utf-8') as fout:
+        r = csv.reader(fin)
+        w = csv.writer(fout)
+
+        next(r, None)
+        w.writerow(['date_time', 'licence_plate', 'plate_fallback'])
+
+        r = csv.reader(fin)
+        for row in r:
+            new_row = [' '.join([row[0], row[1]])] + row[2:]
+            w.writerow(new_row)
+
+    with open(out_filename, 'r', encoding='utf-8') as fout:
+        r = csv.DictReader(fout)
+        fuel_events = []
+        for row in r:
+            f = FuelEvent.create_from_dict(row)
+            fuel_events.append(f)
+            print(row)
+
+    return fuel_events
+
+
+def clean_fuel_events(events):
+    events.sort(key=lambda f: f.date_time)
+    f_events = (
+        f
+        for f in events
+    )
+
+    for f in f_events:
+        date_time_str = f.date_time + ':00'
+        date_time_obj = datetime.datetime.strptime(date_time_str, '%d/%m/%Y %H:%M:%S')
+        date_time_format = datetime.datetime.strftime(date_time_obj, '%Y-%m-%d %H:%M:%S')
+        f.date_time = date_time_format
+        print(f.date_time, f.licence_plate, f.plate_fallback)
+
+        # replace licence_plate with plate_fallback
+        # strip licence_plate of blanks
+
