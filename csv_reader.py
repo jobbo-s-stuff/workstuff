@@ -28,7 +28,6 @@ def read_fuel_csv(in_filename, out_filename):
 
     return fuel_events
 
-
 def clean_fuel_events(events):
     for f in events:
         date_time_str = f.date_time + ':00'
@@ -41,3 +40,21 @@ def clean_fuel_events(events):
         print(f.date_time, f.licence_plate, f.plate_fallback)
 
         # strip licence_plate of blanks
+
+def clean_read_fuel_events(in_filename):
+    fuel_events = []
+    with open(in_filename, 'r', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            # parse row wnd format data
+            date_time_str = row[0] + ' ' + row[1] + ':00' 
+            date_time_obj = datetime.datetime.strptime(date_time_str, '%d/%m/%Y %H:%M:%S')
+            clean_date_time = datetime.datetime.strftime(date_time_obj, '%Y-%m-%d %H:%M:%S')
+            licence_plate = row[2]
+            plate_fallback = row[3]
+            
+            if plate_fallback != '':
+                licence_plate = plate_fallback
+            
+            # append FuelEvent obj to list
+            fuel_events.append(FuelEvent(licence_plate, plate_fallback, clean_date_time))
