@@ -52,9 +52,11 @@ def clean_read_fuel_events(in_filename):
             clean_date_time = datetime.datetime.strftime(date_time_obj, '%Y-%m-%d %H:%M:%S')
             licence_plate = row[2]
             plate_fallback = row[3]
-            
+
             if plate_fallback != '':
                 licence_plate = plate_fallback
             
             # append FuelEvent obj to list
             fuel_events.append(FuelEvent(licence_plate, plate_fallback, clean_date_time))
+
+            return fuel_events
