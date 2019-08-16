@@ -1,7 +1,7 @@
 import os
 import csv_reader
-#import connect
-#import wunder
+import connect
+import wunder
 
 
 def main():
@@ -13,10 +13,13 @@ def main():
     min_fuel_time = csv_reader.get_min_time(events)
     max_fuel_time = csv_reader.get_max_time(events)
     licence_plates = csv_reader.get_plates(events)
-    #connect.db_query(min_fuel_time, max_fuel_time, licence_plates) 
+    query_result = connect.db_query(min_fuel_time, max_fuel_time, licence_plates) 
     # select reservatons that match licence plate and fueltimestamp falls between start and end time
     # convert to API consumable
-    #wunder.post_vouchers()
+    if len(query_result) > len(events):
+        raise ValueError('Query result does not match tank events')
+    else:
+        wunder.post_vouchers(query_result)
 
 
 def get_csv_in():

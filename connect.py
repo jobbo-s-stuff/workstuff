@@ -16,11 +16,9 @@ def db_query(min_fuel_time, max_fuel_time, licence_plates):
                                   database="database")
     cursor = connection.cursor(cursor_factory=RealDictCursor)
     print("Querying reservations, cars...")
-    cursor.execute("SELECT cars.carid, cars.licenceplate, cars.vehicletypeid, reservations.reservationid, reservations.carid, reservations.customerid, reservations.starttime, reservations.endtime, reservations.startbatterylevel, reservations.endbatterylevel FROM reservations INNER JOIN cars ON reservations.carid = cars.carid WHERE reservations.endtime >= (%s) and reservations.starttime <= (%s)and startbatterylevel <= 25  and endbatterylevel >= 84 and isdev = 0 and drivendistance != 0 and cars.licenceplate IN ANY(%s);", min_fuel_time, max_fuel_time, licence_plates)
-
-    # TODO: don't dump as json, store in list instead
-
-
+    cursor.execute("SELECT reservations.reservationid, reservations.customerid, reservations.starttime FROM reservations INNER JOIN cars ON reservations.carid = cars.carid WHERE reservations.endtime >= (%s) and reservations.starttime <= (%s)and startbatterylevel <= 25  and endbatterylevel >= 84 and isdev = 0 and drivendistance != 0 and cars.licenceplate IN ANY(%s);", min_fuel_time, max_fuel_time, licence_plates)
+    result = cursor.fetchall()
     cursor.close()
     connection.close()
     print("PostgreSQL connection is closed")
+    return result
